@@ -4,6 +4,13 @@ const path = require("path");
 
 const fp = path.join(__dirname, "../csv/wnl.csv");
 
+const map0 = {
+  2023: "二零二三",
+  2024: "二零二四",
+  2025: "二零二五",
+  2026: "二零二六",
+};
+
 const map1 = {
   正月: 1,
   二月: 2,
@@ -80,7 +87,7 @@ const preprocess = (data) => {
   const day = parseInt(dt[2]);
   const v = year * 10000 + month * 100 + day;
   if (v < THREADHOLD_START || v > THREADHOLD_END) {
-    console.log(v);
+    // console.log(v);
     return true;
   }
   return false;
@@ -99,6 +106,15 @@ const processDate = (data) => {
 const processLunarYear = (data) => {
   data = trimString(data);
   return parseInt(data);
+};
+
+const processLunarYearChinese = (data) => {
+  data = trimString(data);
+  const ret = map0[data];
+  if (!ret) {
+    console.error("农历年", data);
+  }
+  return ret;
 };
 
 const processLunarMonth = (data) => {
@@ -124,7 +140,7 @@ const processData = (record) => {
   const lunar_year = processLunarYear(record["农历年"]);
   const lunar_month = processLunarMonth(record["农历月"]);
   const lunar_day = processLunarDay(record["农历日"]);
-  const lunar_year_chinese = record["农历年"];
+  const lunar_year_chinese = processLunarYearChinese(record["农历年"]);
   const lunar_month_chinese = record["农历月"];
   const lunar_day_chinese = record["农历日"];
   const ganzhi_year = record["年干支"];
